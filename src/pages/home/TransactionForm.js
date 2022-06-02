@@ -11,6 +11,13 @@ function TransactionForm({ uid }) {
     addDocument({ uid, name, amount });
   };
 
+  useEffect(() => {
+    if (response.success) {
+      setName("");
+      setAmount("");
+    }
+  }, [response.success]);
+
   // Reset Form fields
   useEffect(() => {
     if (response.success) {
