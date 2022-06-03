@@ -31,6 +31,13 @@ const firestoreReducer = (state, action) => {
         success: true,
         error: null,
       };
+    case "DELETED_DOCUMENT":
+      return {
+        isPending: false,
+        document: null,
+        success: true,
+        error: null,
+      };
     default:
       return state;
   }
@@ -62,12 +69,23 @@ export const useFirestore = (collection) => {
         payload: addedDocument,
       });
     } catch (err) {
-      dispatchIfNotCancelled({ type: "ERROR", pyaload: err.message });
+      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
     }
   };
 
   // Delete New Document
-  const deleteDocument = async (doc) => {};
+  const deleteDocument = async (id) => {
+    dispatch({ type: "IS_PENDING" });
+
+    try {
+      await ref.doc(id).delete();
+      dispatchIfNotCancelled({
+        type: "DELETED_DOCUMENT",
+      });
+    } catch (err) {
+      dispatchIfNotCancelled({ type: "ERROR", payload: "Could Not Delete" });
+    }
+  };
 
   // Cleanup function => Prevents component from unmounting while querying DB
   useEffect(() => {
